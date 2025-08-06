@@ -1,5 +1,13 @@
 <?php
 
+function get_env_or_default(?string $name = null, string|array|false $default = false): string|array|false {
+    $var = getenv($name);
+    if ( $var !== false ) {
+        return $var;
+    }
+    return $default;
+}
+
 if(getenv('WIKI_ENV') == "Dev") {
     ini_set("error_reporting", E_ALL & ~E_DEPRECATED);
     ini_set( 'display_errors', 1 );
@@ -24,8 +32,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
 
-$wgSitename = "Repair Wiki";
-$wgMetaNamespace = "RepairWiki";
+$wgSitename = get_env_or_default('WIKI_SITE_NAME', 'Repair Wiki');
+$wgMetaNamespace = get_env_or_default('WIKI_META_NAMESPACE', 'RepairWiki');
 
 ## The URL base path to the directory containing the wiki;
 ## defaults for all runtime URL paths are based off of this.
@@ -60,9 +68,6 @@ $wgDevelopmentWarnings = false;
 
 $wgEnableEmail = true;
 $wgEnableUserEmail = true; # UPO
-
-$wgEmergencyContact = "webmaster@repair.wiki";
-$wgPasswordSender = "no-reply@repair.wiki";
 
 $wgEnotifUserTalk = false; # UPO
 $wgEnotifWatchlist = false; # UPO
@@ -139,7 +144,8 @@ $wgDefaultSkin = "citizen";
 #wfLoadSkin( 'MonoBook' );
 #wfLoadSkin( 'Timeless' );
 #wfLoadSkin( 'Vector' );
-wfLoadSkin( 'Citizen' );
+#wfLoadSkin( 'Citizen' );
+wfLoadSkin( get_env_or_default('WIKI_SKIN', 'Citizen') );
 
 # End of automatically generated settings.
 # Add more configuration options below.
@@ -184,11 +190,13 @@ wfLoadExtension( 'DeleteBatch' );
 wfLoadExtension( 'VEForAll' );
 wfLoadExtension( 'AbuseFilter' );
 wfLoadExtension( 'StopForumSpam' );
-#wfLoadExtension( 'ConfirmAccount' );
 wfLoadExtension( 'SimpleBatchUpload' );
 wfLoadExtension( 'CategoryTree' );
 wfLoadExtension( 'SmiteSpam' );
 
+if (getenv('WIKI_ENABLE_CONFIRM_ACCOUNT') !== false) {
+    wfLoadExtension( 'ConfirmAccount' );
+}
 # Extension configuration
 
 ## Discord Webhook
@@ -249,7 +257,6 @@ $wgGroupPermissions['bureaucrat']['createaccount'] = true;
 $wgGroupPermissions['no-captcha']['skipcaptcha'] = true;
 
 # Email
-
 $wgSMTP = [
     'host'     => getenv("WIKI_EMAIL_HOST"), // could also be an IP address. Where the SMTP server is located. If using SSL or TLS, add the prefix "ssl://" or "tls://".
     'IDHost'   => getenv("WIKI_EMAIL_IDHOST"),      // Generally this will be the domain name of your website (aka mywiki.org)
@@ -259,16 +266,16 @@ $wgSMTP = [
     'password' => getenv("WIKI_EMAIL_PASSWORD") // Password to use for SMTP authentication (if being used)
 ];
 
-$wgEmergencyContact = 'team@repair.wiki';
-$wgPasswordSender = 'no-reply@repair.wiki';
-
+# TODO: Move these to environment variables
+$wgEmergencyContact = getnv('WIKI_EMERGENCY_EMAIL');
+$wgPasswordSender = getenv('WIKI_NO_REPLY_EMAIL');
+$wgConfirmAccountContact = getenv('WIKI_NO_REPLY_EMAIL');
 
 $wgUpgradeKey = getenv('WIKI_UPGRADE_KEY');
 
 $wgReadOnly = getenv('WIKI_READ_ONLY');
 
 # Captcha
-
 wfLoadExtensions([ 'ConfirmEdit', 'ConfirmEdit/hCaptcha' ]);
 
 $wgHCaptchaSendRemoteIP = true;
@@ -299,7 +306,6 @@ $wgConfirmAccountRequestFormItems = [
     'Links'           => [ 'enabled' => false ],
     'TermsOfService'  => [ 'enabled' => false ],
 ];
-$wgConfirmAccountContact = "no-reply@repair.wiki";
 
 # UploadWizard
 $wgUploadWizardConfig = [

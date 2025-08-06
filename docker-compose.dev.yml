@@ -27,6 +27,9 @@ services:
       - MEDIAWIKI_SECRET
       - WIKI_CAPTCHA_KEY
       - WIKI_CAPTCHA_SITE
+      - WIKI_NO_REPLY_EMAIL
+      - WIKI_EMERGENCY_EMAIL
+      - DISCORD_WEBHOOK
     depends_on:
       db:
         condition: service_started
