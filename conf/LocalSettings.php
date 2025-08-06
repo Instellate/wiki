@@ -267,7 +267,7 @@ $wgSMTP = [
 ];
 
 # TODO: Move these to environment variables
-$wgEmergencyContact = getnv('WIKI_EMERGENCY_EMAIL');
+$wgEmergencyContact = getenv('WIKI_EMERGENCY_EMAIL');
 $wgPasswordSender = getenv('WIKI_NO_REPLY_EMAIL');
 $wgConfirmAccountContact = getenv('WIKI_NO_REPLY_EMAIL');
 
