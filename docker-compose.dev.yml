@@ -30,8 +30,16 @@ services:
       - WIKI_NO_REPLY_EMAIL
       - WIKI_EMERGENCY_EMAIL
       - DISCORD_WEBHOOK
+      - AWS_DOMAIN
+      - AWS_BACKEND_DOMAIN
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_BUCKET_NAME
+      - AWS_REGION
     depends_on:
       db:
+        condition: service_started
+      s3:
         condition: service_started
   db:
     image: mariadb:10.6.13
@@ -43,3 +51,15 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
     volumes:
       - ./data/db:/var/lib/mysql
+  s3:
+    image: quay.io/minio/minio
+    ports:
+      - 9000:9000
+      - 9001:9001 # Admin dashboard endpoint
+    restart: always
+    environment:
+      MINIO_ROOT_USER: "${AWS_ACCESS_KEY_ID}"
+      MINIO_ROOT_PASSWORD: "${AWS_SECRET_ACCESS_KEY}"
+    volumes:
+      - ./data/s3:/data
+    command: ["server", "/data", "--console-address", ":9001"]

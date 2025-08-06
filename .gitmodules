@@ -70,3 +70,6 @@
 	path = extensions/SmiteSpam
 	url = git@github.com:wikimedia/mediawiki-extensions-SmiteSpam.git
 	branch = REL1_43
+[submodule "extensions/AWS"]
+	path = extensions/AWS
+	url = https://github.com/edwardspec/mediawiki-aws-s3.git

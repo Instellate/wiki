@@ -54,8 +54,6 @@ $wgServer = getenv('FULL_URL');
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
 
-$wgUploadDirectory = "/var/www/html/images/";
-
 $wgLogos = [
 	'1x' => "$wgResourceBasePath/images/repair_preservation_group.svg",
 	'icon' => "$wgResourceBasePath/images/repair_preservation_group.svg",
@@ -193,6 +191,7 @@ wfLoadExtension( 'StopForumSpam' );
 wfLoadExtension( 'SimpleBatchUpload' );
 wfLoadExtension( 'CategoryTree' );
 wfLoadExtension( 'SmiteSpam' );
+wfLoadExtension( 'AWS' );
 
 if (getenv('WIKI_ENABLE_CONFIRM_ACCOUNT') !== false) {
     wfLoadExtension( 'ConfirmAccount' );
@@ -333,3 +332,14 @@ $wgUploadWizardConfig = [
     };
 // 10kx10k
 $wgMaxImageArea = 10e7;
+
+# AWS
+$wgAWSBucketDomain = getenv('AWS_DOMAIN');
+$wgFileBackends['s3']['endpoint'] = getenv('AWS_BACKEND_DOMAIN');
+$wgAWSBucketName = getenv('AWS_BUCKET_NAME');
+
+$wgAWSRegion = getenv('AWS_REGION');
+if ($wgAWSRegion === false) {
+    $wgFileBackends['s3']['use_path_style_endpoint'] = true;
+    $wgAWSRegion = 'no-region';
+}

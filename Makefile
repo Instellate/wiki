@@ -2,6 +2,7 @@
 
 init:
 	sh scripts/db-init-dev.sh
+	sh scripts/minio-init-dev.sh
 
 update:
 	sh scripts/update-dev.sh

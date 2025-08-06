@@ -1,4 +1,5 @@
 .env
 data/db
+data/s3
 data/images/*
 data/semantics/*
