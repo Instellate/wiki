@@ -47,6 +47,9 @@ RUN apt-get update && \
 
 COPY ./conf/supervisord.conf /etc/supervisor/conf.d/
 
+# PHP Redis
+RUN pecl install redis-6.2.0 && docker-php-ext-enable redis
+
 # Cron
 RUN apt-get install -y cron --no-install-recommends
 

@@ -88,10 +88,6 @@ $wgDBTableOptions = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
 # This has no effect unless $wgSharedDB is also set.
 $wgSharedTables[] = "actor";
 
-## Shared memory settings
-$wgMainCacheType = CACHE_ACCEL;
-$wgMemCachedServers = [];
-
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then set this to true:
 $wgEnableUploads = true;
@@ -343,3 +339,22 @@ if ($wgAWSRegion === false) {
     $wgFileBackends['s3']['use_path_style_endpoint'] = true;
     $wgAWSRegion = 'no-region';
 }
+
+# Redis
+$wgObjectCaches['redis'] = [
+    'class'     => 'RedisBagOStuff',
+    'servers'   => [ getenv('REDIS_HOST') ],
+    'password'  => getenv('REDIS_PASSWORD'),
+];
+
+$wgMainCacheType = 'redis';
+
+$wgJobTypeConf['default'] = [
+    'class'         => 'JobQueueRedis',
+    'redisServer'   => getenv('REDIS_HOST'),
+    'password'      => getenv('REDIS_PASSWORD') ,
+    'redisConfig'   => [
+        'password' => getenv('REDIS_PASSWORD')
+    ],
+    'daemonized'    => true
+ ];

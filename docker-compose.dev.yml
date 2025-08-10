@@ -36,10 +36,14 @@ services:
       - AWS_SECRET_ACCESS_KEY
       - AWS_BUCKET_NAME
       - AWS_REGION
+      - REDIS_PASSWORD
+      - REDIS_HOST
     depends_on:
       db:
         condition: service_started
       s3:
+        condition: service_started
+      redis:
         condition: service_started
   db:
     image: mariadb:10.6.13
@@ -63,3 +67,9 @@ services:
     volumes:
       - ./data/s3:/data
     command: ["server", "/data", "--console-address", ":9001"]
+
+  redis:
+    image: redis:latest
+    volumes:
+      - ./data/redis:/data
+    command: ["redis-server", "--save", "20", "1", "--requirepass", "${REDIS_PASSWORD}"]
